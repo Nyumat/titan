@@ -1,10 +1,10 @@
 [coordinator.api]
 endpoints.health = true
-endpoints.jobs = false
-endpoints.tasks = false
-endpoints.nodes = false
-endpoints.queues = false
-endpoints.metrics = false
+endpoints.jobs = true
+endpoints.tasks = true
+endpoints.nodes = true
+endpoints.queues = true
+endpoints.metrics = true
 
 [broker]
 type = "rabbitmq"

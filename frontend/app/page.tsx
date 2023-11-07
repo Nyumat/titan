@@ -73,7 +73,7 @@ export default function Home() {
               VERDICT: {""}
               <span
                 className={`${
-                  output.judgement === "PASS"
+                  output.judgement === "ACCEPTED"
                     ? "text-green-500"
                     : "text-red-500"
                 }`}

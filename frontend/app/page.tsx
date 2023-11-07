@@ -3,10 +3,19 @@
 import { Editor } from "@monaco-editor/react";
 import { useState } from "react";
 
+type JudgeResponse = {
+  output: string;
+  judgement: string;
+};
+
 export default function Home() {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("bash");
-  const [output, setOutput] = useState("Output:");
+  const [output, setOutput] = useState<JudgeResponse>({
+    output: "",
+    judgement: "",
+  });
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -28,7 +37,7 @@ export default function Home() {
                 type="button"
                 className="rounded bg-indigo-600 px-3 py-2 text-md font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
                 onClick={() => {
-                  setOutput("Executing...");
+                  setOutput({ output: "", judgement: "" });
                   fetch("/api/execute", {
                     method: "POST",
                     body: JSON.stringify({
@@ -41,11 +50,7 @@ export default function Home() {
                   })
                     .then((res) => res.json())
                     .then((data) => {
-                      if (data.message) {
-                        setOutput(data.message);
-                      } else {
-                        setOutput(data.output);
-                      }
+                      setOutput(data);
                     });
                 }}
               >
@@ -63,7 +68,18 @@ export default function Home() {
           />
           <div className="overflow-hidden bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6 whitespace-pre text-black">
-              {output}
+              STDOUT: {output.output}
+              <br />
+              VERDICT: {""}
+              <span
+                className={`${
+                  output.judgement === "PASS"
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {output.judgement}
+              </span>
             </div>
           </div>
         </div>

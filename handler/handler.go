@@ -17,6 +17,11 @@ type ExecRequest struct {
 	Language string `json:"language"`
 }
 
+type ExecResponse struct {
+	Output    string `json:"output"`
+	Judgement string `json:"judgement"`
+}
+
 func Handler(c web.Context) error {
 	er := ExecRequest{}
 
@@ -59,7 +64,7 @@ func Handler(c web.Context) error {
 
 	select {
 	case r := <-result:
-		return c.JSON(http.StatusOK, map[string]string{"output": r})
+		return c.JSON(http.StatusOK, checkResult(er, r))
 	case <-c.Done():
 		return c.JSON(http.StatusGatewayTimeout, map[string]string{"message": "timeout"})
 	}
@@ -102,4 +107,47 @@ func buildTask(er ExecRequest) (input.Task, error) {
 			filename: er.Code,
 		},
 	}, nil
+}
+
+func checkResult(er ExecRequest, output string) ExecResponse {
+	return ExecResponse{
+		Output:    output,
+		Judgement: checkCode(er.Language, output),
+	}
+}
+
+func checkCode(language, output string) string {
+	switch strings.TrimSpace(language) {
+	case "":
+		return "ERROR"
+	case "python":
+		return checkPython(output)
+	case "go":
+		return checkGo(output)
+	case "bash":
+		return checkBash(output)
+	default:
+		return "ERROR"
+	}
+}
+
+func checkPython(output string) string {
+	if strings.Contains(output, "Hello, World!") {
+		return "PASS"
+	}
+	return "FAIL"
+}
+
+func checkGo(output string) string {
+	if strings.Contains(output, "Hello, World!") {
+		return "PASS"
+	}
+	return "FAIL"
+}
+
+func checkBash(output string) string {
+	if strings.Contains(output, "Hello, World!") {
+		return "PASS"
+	}
+	return "FAIL"
 }

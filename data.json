@@ -1,0 +1,38 @@
+{
+    "problems": [
+        {
+            "id": "problem1",
+            "testCases": [
+                {
+                    "input": "5\n",
+                    "expectedOutput": "25\n"
+                },
+                {
+                    "input": "10\n",
+                    "expectedOutput": "100\n"
+                },
+                {
+                    "input": "3\n",
+                    "expectedOutput": "9\n"
+                }
+            ]
+        },
+        {
+            "id": "problem2",
+            "testCases": [
+                {
+                    "input": "2\n",
+                    "expectedOutput": "4\n"
+                },
+                {
+                    "input": "7\n",
+                    "expectedOutput": "49\n"
+                },
+                {
+                    "input": "8\n",
+                    "expectedOutput": "64\n"
+                }
+            ]
+        }
+    ]
+}

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Nyumat/titan/testrunner"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/runabol/tork"
@@ -64,7 +65,10 @@ func Handler(c web.Context) error {
 
 	select {
 	case r := <-result:
-		return c.JSON(http.StatusOK, checkResult(er, r))
+		return c.JSON(http.StatusOK, ExecResponse{
+			Output:    r,
+			Judgement: testrunner.CheckCode(er.Language, r),
+		})
 	case <-c.Done():
 		return c.JSON(http.StatusGatewayTimeout, map[string]string{"message": "timeout"})
 	}
@@ -107,47 +111,4 @@ func buildTask(er ExecRequest) (input.Task, error) {
 			filename: er.Code,
 		},
 	}, nil
-}
-
-func checkResult(er ExecRequest, output string) ExecResponse {
-	return ExecResponse{
-		Output:    output,
-		Judgement: checkCode(er.Language, output),
-	}
-}
-
-func checkCode(language, output string) string {
-	switch strings.TrimSpace(language) {
-	case "":
-		return "ERROR"
-	case "python":
-		return checkPython(output)
-	case "go":
-		return checkGo(output)
-	case "bash":
-		return checkBash(output)
-	default:
-		return "ERROR"
-	}
-}
-
-func checkPython(output string) string {
-	if strings.Contains(output, "Hello, World!") {
-		return "PASS"
-	}
-	return "FAIL"
-}
-
-func checkGo(output string) string {
-	if strings.Contains(output, "Hello, World!") {
-		return "PASS"
-	}
-	return "FAIL"
-}
-
-func checkBash(output string) string {
-	if strings.Contains(output, "Hello, World!") {
-		return "PASS"
-	}
-	return "FAIL"
 }

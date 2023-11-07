@@ -1,4 +1,4 @@
-module github.com/runabol/code-execution-demo
+module github.com/Nyumat/titan
 
 go 1.21
 
